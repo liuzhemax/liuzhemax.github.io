@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>drf序列化器 | 阿哲博客</title><meta name="author" content="阿哲"><meta name="copyright" content="阿哲"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="序列化与反序列化介绍 在日常开发中，会从别的API获取数据或者自己写API提供数据，数据格式一般都是采用 JSON格式。这期间就会涉及两个专业术语：   序列化：将python对象转json   反序列化：将json转为python对象   之前常用三种序列化方式 之前经常用json模式完成序列化与反序列化操作：   序列化应用场景示例：用ORM查询数据，采用JSON格式API返回数据。   反序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="drf序列化器">
+<meta property="og:url" content="http://liuzhemax.github.io/2024/05/02/drf%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8/index.html">
+<meta property="og:site_name" content="阿哲博客">
+<meta property="og:description" content="序列化与反序列化介绍 在日常开发中，会从别的API获取数据或者自己写API提供数据，数据格式一般都是采用 JSON格式。这期间就会涉及两个专业术语：   序列化：将python对象转json   反序列化：将json转为python对象   之前常用三种序列化方式 之前经常用json模式完成序列化与反序列化操作：   序列化应用场景示例：用ORM查询数据，采用JSON格式API返回数据。   反序">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://liuzhemax.github.io/medias/touxiang.jpg">
+<meta property="article:published_time" content="2024-05-02T00:45:32.000Z">
+<meta property="article:modified_time" content="2024-09-29T09:54:02.231Z">
+<meta property="article:author" content="阿哲">
+<meta property="article:tag" content="DRF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://liuzhemax.github.io/medias/touxiang.jpg"><link rel="shortcut icon" href="/medias/touxiang.jpg"><link rel="canonical" href="http://liuzhemax.github.io/2024/05/02/drf%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'drf序列化器',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-29 17:54:02'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/medias/touxiang.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">129</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="阿哲博客"><img class="site-icon" src="/medias/touxiang.jpg"/><span class="site-name">阿哲博客</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">drf序列化器</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-02T00:45:32.000Z" title="发表于 2024-05-02 08:45:32">2024-05-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-29T09:54:02.231Z" title="更新于 2024-09-29 17:54:02">2024-09-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/DRF/">DRF</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="drf序列化器"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h2 id="序列化与反序列化介绍">序列化与反序列化介绍</h2>
+<p>在日常开发中，会从别的API获取数据或者自己写API提供数据，数据格式一般都是采用 JSON格式。这期间就会涉及两个专业术语：</p>
+<ul>
+<li>
+<p>序列化：将python对象转json</p>
+</li>
+<li>
+<p>反序列化：将json转为python对象</p>
+</li>
+</ul>
+<h2 id="之前常用三种序列化方式">之前常用三种序列化方式</h2>
+<p>之前经常用json模式完成序列化与反序列化操作：</p>
+<ul>
+<li>
+<p>序列化应用场景示例：用ORM查询数据，采用JSON格式API返回数据。</p>
+</li>
+<li>
+<p>反序列化应用场景示例：从别的API获取数据，在Python里处理。</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json </span><br><span class="line"><span class="comment"># 序列化 </span></span><br><span class="line">computer = &#123;<span class="string">&quot;主机&quot;</span>:<span class="number">5000</span>,<span class="string">&quot;显示器&quot;</span>:<span class="number">1000</span>,<span class="string">&quot;鼠标&quot;</span>:<span class="number">60</span>,<span class="string">&quot;键盘&quot;</span>:<span class="number">150</span>&#125; </span><br><span class="line">json.dumps(computer) </span><br><span class="line"><span class="comment"># 反序列化 </span></span><br><span class="line">json.loads(json_obj)</span><br></pre></td></tr></table></figure>
+<p>Serializers是Django内置的一个序列化器，可直接将Python对象转为JSON格式，但不支 持反序列化。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.core <span class="keyword">import</span> serializers </span><br><span class="line">obj = User.objects.<span class="built_in">all</span>() </span><br><span class="line">data = serializers.serialize(<span class="string">&#x27;json&#x27;</span>, obj)</span><br></pre></td></tr></table></figure>
+<p>JsonResponse模块自动将Python对象转为JSON对象并响应。</p>
+<h2 id="DRF序列化器三种类型">DRF序列化器三种类型</h2>
+<p>DRF中有一个serializers模块专门负责数据序列化，DRF提供的方案更先进、更高级别的序列化方案。</p>
+<p>序列化器支持三种类型：</p>
+<ul>
+<li>
+<p>Serializer：对Model（数据模型）进行序列化，需自定义字段映射。</p>
+</li>
+<li>
+<p>ModelSerializer：对Model进行序列化，会自动生成字段和验证规则，默认还包含简单的create()和update()方法。</p>
+</li>
+<li>
+<p>HyperlinkedModelSerializer：与ModelSerializer类似，只不过使用超链接来表示关系而不是主键ID。</p>
+</li>
+</ul>
+<h3 id="DRF序列化器：Serializer">DRF序列化器：Serializer</h3>
+<p><img src="/images/57834BFA72604216B2454EF9F52EAA4Dclipboard.png" alt></p>
+<p><img src="/images/F41A31A33C09447CBA91CF27D0C18DF3clipboard.png" alt></p>
+<p><img src="/images/ABAF41BB6161439BA94B251B98B7631Dclipboard.png" alt></p>
+<p><img src="/images/8899633F07CF4CD484E8CAFBD28B03ABclipboard.png" alt></p>
+<p><img src="/images/5E3E23470F6349E7945A835C6B320671clipboard.png" alt></p>
+<h3 id="DRF序列化器：小结">DRF序列化器：小结</h3>
+<p>序列化器工作流程：</p>
+<p>序列化（读数据）：视图里通过ORM从数据库获取数据查询集对象-&gt; 数据传入序列化器-&gt; 序列化器将数据进行序列化-&gt; 调用序列化器的.data获取数据-&gt; 响应返回前端</p>
+<p>反序列化（写数据）：视图获取前端提交的数据-&gt; 数据传入序列化器-&gt; 调用序列化器 的.is_valid方法进行效验-&gt; 调用序列化器的.save()方法保存数据</p>
+<p>序列化器常用方法与属性：</p>
+<ul>
+<li>
+<p>serializer.is_valid()：调用序列化器验证是否通过，传入raise_exception=True可以在 验证失败时由DRF响应400异常。</p>
+</li>
+<li>
+<p>serializer.errors：获取反序列化器验证的错误信息</p>
+</li>
+<li>
+<p>serializer.data：获取序列化器返回的数据</p>
+</li>
+<li>
+<p>serializer.save()：将验证通过的数据保存到数据库（ORM操作）</p>
+</li>
+</ul>
+<h3 id="DRF序列化器：序列化器参数">DRF序列化器：序列化器参数</h3>
+<p><img src="/images/3FCE1815EC494E19BA8C04CB7A0A1F92clipboard.png" alt></p>
+<h3 id="DRF序列化器：扩展验证规则">DRF序列化器：扩展验证规则</h3>
+<p>如果常用参数无法满足验证要求时，可通过钩子方法扩展验证规则。</p>
+<p>局部钩子：validate_字段名(self, 字段值)</p>
+<p>全局钩子：validate(self, 所有校验的数据字典)</p>
+<p><img src="/images/86AF9B0339A0479FAE712A09965725D7clipboard.png" alt></p>
+<p>如果钩子无法满足需要，可以自定义验证器，更灵活。</p>
+<p>在序列化类外面定义验证器，使用validators参数指定验证器。</p>
+<p><img src="/images/8CA45E40B3044C6D9273699CB46DD53Fclipboard.png" alt></p>
+<h3 id="DRF序列化器：ModelSerializer">DRF序列化器：ModelSerializer</h3>
+<p>ModelSerializer 类型不需要自定义字段映射和定义create、update方法，使用起来方便很多！</p>
+<p><img src="/images/3E4AF8ECA3B54DCA801ADCFCF2CCF55Aclipboard.png" alt></p>
+<p>Meta类常用属性：</p>
+<ul>
+<li>
+<p>fields：显示所有或指定字段</p>
+</li>
+<li>
+<p>exclude：排除某个字段，元组格式，不能与fields同时用</p>
+</li>
+<li>
+<p>read_only_fields：只读字段，即只用于序列化，不支持修改</p>
+</li>
+<li>
+<p>extra_kwargs：添加或修改原有的字段参数，字典格式</p>
+</li>
+<li>
+<p>depth：根据关联的数据递归显示，一般是多表</p>
+</li>
+</ul>
+<p><img src="/images/5140C2DA1CC443E99E8A3E856FFC827Eclipboard.png" alt></p>
+<h3 id="DRF序列化器：HyperModelSerializer">DRF序列化器：HyperModelSerializer</h3>
+<p>与MedelSerializer使用方法一样。只不过它使用超链接来表示关系而不是主键ID。</p>
+<p>示例：基于前面用户管理修改</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 更改序列化器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserSerializer</span>(serializers.HyperlinkedModelSerializer):</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">    model = User</span><br><span class="line">    fields = <span class="string">&quot;__all__&quot;</span></span><br><span class="line">    </span><br><span class="line"><span class="comment"># 更改视图</span></span><br><span class="line">user_ser = UserSerializer(queryset, many=<span class="literal">True</span>, context=&#123;<span class="string">&#x27;request&#x27;</span>: request&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更改路由</span></span><br><span class="line">re_path(<span class="string">&#x27;^api/user/$&#x27;</span>, views.UserView.as_view(), name=<span class="string">&quot;user-detail&quot;</span>),</span><br><span class="line">re_path(<span class="string">&#x27;^api/user/(?P&lt;pk&gt;\d+)/$&#x27;</span>, views.UserView.as_view(), name=<span class="string">&quot;user-detail&quot;</span>),</span><br></pre></td></tr></table></figure>
+<p><img src="/images/4DD2402B1656431BAE7F3D11A1CA3BBDclipboard.png" alt></p>
+<h2 id="DRF序列化器关联表显示">DRF序列化器关联表显示</h2>
+<p>例如：应用发布系统项目涉及表</p>
+<p>一对多：一个项目有多个应用，一个应用只能属于一个项目</p>
+<p>多对多：一个应用部署到多台服务器，一个服务器部署多个应用</p>
+<p><img src="/images/701D3760C94F42DBAF935B5530E26E7Aclipboard.png" alt></p>
+<p>1、定义数据模型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Project</span>(models.Model):</span><br><span class="line">    name = models.CharField(max_length=<span class="number">30</span>)</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">App</span>(models.Model):</span><br><span class="line">    name = models.CharField(max_length=<span class="number">30</span>)</span><br><span class="line">    project = models.ForeignKey(Project, on_delete=models.CASCADE) <span class="comment"># 一对多</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Server</span>(models.Model):</span><br><span class="line">    hostname = models.CharField(max_length=<span class="number">30</span>)</span><br><span class="line">    ip = models.GenericIPAddressField()</span><br><span class="line">    app = models.ManyToManyField(App)  <span class="comment"># 多对多</span></span><br></pre></td></tr></table></figure>
+<p>2、定义序列化器</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ProjectSerializer</span>(serializers.ModelSerializer):</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = Project</span><br><span class="line">        fields = <span class="string">&quot;__all__&quot;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AppSerializer</span>(serializers.ModelSerializer):</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = App</span><br><span class="line">        fields = <span class="string">&quot;__all__&quot;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ServerSerializer</span>(serializers.ModelSerializer):</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = Server</span><br><span class="line">        fields = <span class="string">&quot;__all__&quot;</span></span><br></pre></td></tr></table></figure>
+<p>3、定义视图</p>
+<p><img src="/images/BD4522FD691947AAA6AE4A041A6B1A0Bclipboard.png" alt></p>
+<p>4、定义路由</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re_path(<span class="string">&#x27;^api/project/$&#x27;</span>, views.ProjectView.as_view()), </span><br><span class="line">re_path(<span class="string">&#x27;^api/app/$&#x27;</span>, views.AppView.as_view()),</span><br><span class="line">re_path(<span class="string">&#x27;^api/server/$&#x27;</span>, views.ServerView.as_view()),</span><br></pre></td></tr></table></figure>
+<p>5、添加测试数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">创建项目：</span><br><span class="line"><span class="keyword">from</span> myapp_api.models <span class="keyword">import</span> Project, App, Server</span><br><span class="line">Project.objects.create(name=<span class="string">&quot;电商&quot;</span>)</span><br><span class="line">Project.objects.create(name=<span class="string">&quot;教育&quot;</span>)</span><br><span class="line">创建应用并指定项目：</span><br><span class="line">project_obj = Project.objects.get(name=<span class="string">&quot;电商&quot;</span>)</span><br><span class="line">App.objects.create(name=<span class="string">&quot;portal&quot;</span>, project=project_obj)</span><br><span class="line">App.objects.create(name=<span class="string">&quot;gateway&quot;</span>, project=project_obj)</span><br><span class="line">创建服务器：</span><br><span class="line">Server.objects.create(hostname=<span class="string">&quot;test1&quot;</span>, ip=<span class="string">&quot;192.168.31.10&quot;</span>)</span><br><span class="line">Server.objects.create(hostname=<span class="string">&quot;test2&quot;</span>, ip=<span class="string">&quot;192.168.31.11&quot;</span>)</span><br><span class="line">将应用部署到服务器：</span><br><span class="line">app_obj = App.objects.get(name=<span class="string">&quot;portal&quot;</span>)</span><br><span class="line">server_obj = Server.objects.get(hostname=<span class="string">&quot;test1&quot;</span>)</span><br><span class="line">server_obj.app.add(app_obj)</span><br></pre></td></tr></table></figure>
+<p>序列化器返回是当前模型中的字段，如果字段是外键时，返回的是外键对应id，如图所 示，如果想要显示外键对应的详细信息如何做呢？</p>
+<p>有两种方法：</p>
+<ul>
+<li>
+<p>定义字段为外键对应序列化类：例如project=ProjectSerializer(read_only=True)， 这种适合针对某个外键字段。</p>
+</li>
+<li>
+<p>序列化类中Meta类启用depth：深度获取关联表数据，这种所有外键都会显示出来。</p>
+</li>
+</ul>
+<p><img src="/images/556DAD7EF3174473ACCA60F1A4580693clipboard.png" alt></p>
+<p>一对多</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 方法1</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AppSerializer</span>(serializers.ModelSerializer):</span><br><span class="line">    project = ProjectSerializer(read_only=<span class="literal">True</span>) <span class="comment"># 一对多，返回关联的项目详情</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = App</span><br><span class="line">        fields = <span class="string">&quot;__all__&quot;</span></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AppSerializer</span>(serializers.ModelSerializer):</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = App</span><br><span class="line">        fields = <span class="string">&quot;__all__&quot;</span></span><br><span class="line">        depth = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/7CAAA66E29CA4D52ACCCD64FDFAF5B3Aclipboard.png" alt></p>
+<p>多对多</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 方法1</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ServerSerializer</span>(serializers.ModelSerializer):</span><br><span class="line">    app = AppSerializer(many=<span class="literal">True</span>)  <span class="comment"># 多对多，返回关联的应用详情</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = Server</span><br><span class="line">        fields = <span class="string">&quot;__all__&quot;</span></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ServerSerializer</span>(serializers.ModelSerializer):</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = Server</span><br><span class="line">        fields = <span class="string">&quot;__all__&quot;</span></span><br><span class="line">        depth = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><img src="/images/12F1A8F1EB2D409FABA2B12145B375F0clipboard.png" alt></p>
+<h2 id="DRF序列化器：SerializerMethodField">DRF序列化器：SerializerMethodField</h2>
+<p>DRF序列化器默认仅返回数据模型中已存在资源，如果想新增返回字段或者二次处理，该 如何操作呢？用SerializerMethodFiled</p>
+<p>示例：给项目API增加一个字段，这个字段数据可从别的表中获取</p>
+<p><img src="/images/621E3E1F030041F9B6F9E4BD2F15E876clipboard.png" alt></p>
+<h2 id="改变序列化和反序列化行为">改变序列化和反序列化行为</h2>
+<p>可以通过重写下面两个方法改变序列化和反序列化的行为：</p>
+<ul>
+<li>
+<p>to_internal_value()：处理反序列化的输入数据，自动转换Python对象，方便处理。</p>
+</li>
+<li>
+<p>to_representation()：处理序列化数据的输出。</p>
+</li>
+</ul>
+<p>示例：如果提交API的数据与序列化器要求的格式不符合，序列化器就会出现错误。 这时就可以重写to_internal_value()方法只提取出我们需要的数据。</p>
+<p><img src="/images/029276C5CD164F06AA0D58C6FC80379Dclipboard.png" alt></p>
+<p>示例：希望给返回的数据添加一个统计应用数量的字段</p>
+<p><img src="/images/183CB3BF6E574AB3B12DEBCFC63B32D2clipboard.png" alt></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://liuzhemax.github.io">阿哲</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://liuzhemax.github.io/2024/05/02/drf%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8/">http://liuzhemax.github.io/2024/05/02/drf%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://liuzhemax.github.io" target="_blank">阿哲博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/DRF/">DRF</a></div><div class="post_share"><div class="social-share" data-image="/medias/touxiang.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/05/01/django%E7%9F%A5%E8%AF%86%E5%9B%9E%E9%A1%BE/" title="django知识回顾"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">django知识回顾</div></div></a></div><div class="next-post pull-right"><a href="/2024/05/03/drf%E8%A7%86%E5%9B%BE/" title="drf视图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">drf视图</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/09/22/django-apscheduler%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="django-apscheduler基本使用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-22</div><div class="title">django-apscheduler基本使用</div></div></a></div><div><a href="/2024/05/04/drf%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD/" title="drf常用功能"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-04</div><div class="title">drf常用功能</div></div></a></div><div><a href="/2024/05/03/drf%E8%A7%86%E5%9B%BE/" title="drf视图"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-03</div><div class="title">drf视图</div></div></a></div><div><a href="/2024/05/01/django%E7%9F%A5%E8%AF%86%E5%9B%9E%E9%A1%BE/" title="django知识回顾"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-01</div><div class="title">django知识回顾</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/medias/touxiang.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">阿哲</div><div class="author-info__description">强大自己是解决问题的唯一办法</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">129</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:1437626743@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">分享个人经验总结</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">序列化与反序列化介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%8B%E5%89%8D%E5%B8%B8%E7%94%A8%E4%B8%89%E7%A7%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">之前常用三种序列化方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%E4%B8%89%E7%A7%8D%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">DRF序列化器三种类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%EF%BC%9ASerializer"><span class="toc-number">3.1.</span> <span class="toc-text">DRF序列化器：Serializer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%EF%BC%9A%E5%B0%8F%E7%BB%93"><span class="toc-number">3.2.</span> <span class="toc-text">DRF序列化器：小结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%EF%BC%9A%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%E5%8F%82%E6%95%B0"><span class="toc-number">3.3.</span> <span class="toc-text">DRF序列化器：序列化器参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%EF%BC%9A%E6%89%A9%E5%B1%95%E9%AA%8C%E8%AF%81%E8%A7%84%E5%88%99"><span class="toc-number">3.4.</span> <span class="toc-text">DRF序列化器：扩展验证规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%EF%BC%9AModelSerializer"><span class="toc-number">3.5.</span> <span class="toc-text">DRF序列化器：ModelSerializer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%EF%BC%9AHyperModelSerializer"><span class="toc-number">3.6.</span> <span class="toc-text">DRF序列化器：HyperModelSerializer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%E5%85%B3%E8%81%94%E8%A1%A8%E6%98%BE%E7%A4%BA"><span class="toc-number">4.</span> <span class="toc-text">DRF序列化器关联表显示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DRF%E5%BA%8F%E5%88%97%E5%8C%96%E5%99%A8%EF%BC%9ASerializerMethodField"><span class="toc-number">5.</span> <span class="toc-text">DRF序列化器：SerializerMethodField</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E5%8F%98%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%A1%8C%E4%B8%BA"><span class="toc-number">6.</span> <span class="toc-text">改变序列化和反序列化行为</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/23/django-webssh%E5%AE%9E%E7%8E%B0/" title="django-webssh实现">django-webssh实现</a><time datetime="2024-09-23T14:00:00.000Z" title="发表于 2024-09-23 22:00:00">2024-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/22/django-apscheduler%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="django-apscheduler基本使用">django-apscheduler基本使用</a><time datetime="2024-09-22T13:00:32.000Z" title="发表于 2024-09-22 21:00:32">2024-09-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/28/zabbix%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="zabbix监控服务器">zabbix监控服务器</a><time datetime="2024-08-28T07:00:00.000Z" title="发表于 2024-08-28 15:00:00">2024-08-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/26/%E9%93%B6%E6%B2%B3%E9%BA%92%E9%BA%9F%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85zabbix7/" title="银河麒麟离线安装zabbix7">银河麒麟离线安装zabbix7</a><time datetime="2024-08-26T10:00:00.000Z" title="发表于 2024-08-26 18:00:00">2024-08-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/10/vue%E8%B7%AF%E7%94%B1vue-router/" title="vue路由vue-router">vue路由vue-router</a><time datetime="2024-06-10T00:45:32.000Z" title="发表于 2024-06-10 08:45:32">2024-06-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="footer_custom_text">阿哲技术之路</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const initValine = () => {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'CpY65dXCKVEa3DBB8f2QYt8x-gzGzoHsz',
+      appKey: '0q1Om1m7X58AstiqpPYRPyDT',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  const loadValine = async () => {
+    if (typeof Valine === 'function') initValine()
+    else {
+      await getScript('https://cdn.jsdelivr.net/npm/valine@1.5.1/dist/Valine.min.js')
+      initValine()
+    }
+  }
+
+  if ('Valine' === 'Valine' || !false) {
+    if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+    else setTimeout(loadValine, 0)
+  } else {
+    window.loadOtherComment = loadValine
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

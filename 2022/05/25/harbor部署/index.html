@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Harbor部署 | 阿哲博客</title><meta name="author" content="阿哲"><meta name="copyright" content="阿哲"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Harbor 概述 Harbor是由VMWare公司开源的容器镜像仓库。事实上，Harbor是在Docker Registry上进行了相应的企业级扩展， 从而获得了更加广泛的应用，这些新的企业级特性包括：管理用户界面，基于角色的访问控制 ，AD&#x2F;LDAP集成以及 审计日志等，足以满足基本企业需求。 官方：https:&#x2F;&#x2F;goharbor.io&#x2F; Github：https:&#x2F;&#x2F;github.com&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Harbor部署">
+<meta property="og:url" content="http://liuzhemax.github.io/2022/05/25/harbor%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="阿哲博客">
+<meta property="og:description" content="Harbor 概述 Harbor是由VMWare公司开源的容器镜像仓库。事实上，Harbor是在Docker Registry上进行了相应的企业级扩展， 从而获得了更加广泛的应用，这些新的企业级特性包括：管理用户界面，基于角色的访问控制 ，AD&#x2F;LDAP集成以及 审计日志等，足以满足基本企业需求。 官方：https:&#x2F;&#x2F;goharbor.io&#x2F; Github：https:&#x2F;&#x2F;github.com&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://liuzhemax.github.io/medias/touxiang.jpg">
+<meta property="article:published_time" content="2022-05-25T13:45:32.000Z">
+<meta property="article:modified_time" content="2024-09-29T09:54:02.233Z">
+<meta property="article:author" content="阿哲">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://liuzhemax.github.io/medias/touxiang.jpg"><link rel="shortcut icon" href="/medias/touxiang.jpg"><link rel="canonical" href="http://liuzhemax.github.io/2022/05/25/harbor%E9%83%A8%E7%BD%B2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Harbor部署',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2024-09-29 17:54:02'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/medias/touxiang.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">129</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="阿哲博客"><img class="site-icon" src="/medias/touxiang.jpg"/><span class="site-name">阿哲博客</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Harbor部署</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-25T13:45:32.000Z" title="发表于 2022-05-25 21:45:32">2022-05-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-29T09:54:02.233Z" title="更新于 2024-09-29 17:54:02">2024-09-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Docker/">Docker</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Harbor部署"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><p>Harbor 概述</p>
+<p>Harbor是由VMWare公司开源的容器镜像仓库。事实上，Harbor是在Docker Registry上进行了相应的企业级扩展， 从而获得了更加广泛的应用，这些新的企业级特性包括：管理用户界面，基于角色的访问控制 ，AD/LDAP集成以及 审计日志等，足以满足基本企业需求。</p>
+<p>官方：<a target="_blank" rel="noopener" href="https://goharbor.io/">https://goharbor.io/</a></p>
+<p>Github：<a target="_blank" rel="noopener" href="https://github.com/goharbor/harbor">https://github.com/goharbor/harbor</a></p>
+<p>Harbor 部署先决条件</p>
+<p>服务器硬件配置：</p>
+<p>最低要求：CPU2核/内存4G/硬盘40GB</p>
+<p>推荐：CPU4核/内存8G/硬盘160GB</p>
+<p>软件：</p>
+<p>Docker CE 17.06版本+</p>
+<p>Docker Compose 1.18版本+</p>
+<p>Harbor安装有2种方式：</p>
+<p>在线安装：从Docker Hub下载Harbor相关镜像，因此安装软件包非常小</p>
+<p>离线安装：安装包包含部署的相关镜像，因此安装包比较大</p>
+<p>Harbor 部署HTTP</p>
+<p>1、先安装Docker和Docker Compose</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/docker/compose/releases">https://github.com/docker/compose/releases</a></p>
+<p>2、部署Harbor HTTP</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> docker-compose-Linux-x86_64 /usr/bin/docker-compose</span><br><span class="line"><span class="built_in">chmod</span> +x /usr/bin/docker-compose</span><br><span class="line"></span><br><span class="line">tar zxvf harbor-offline-installer-v2.0.0.tgz </span><br><span class="line"><span class="built_in">cd</span> harbor </span><br><span class="line"><span class="built_in">cp</span> harbor.yml.tmpl harbor.yml </span><br><span class="line"></span><br><span class="line">vi harbor.yml </span><br><span class="line">hostname: reg.azhe.com </span><br><span class="line"><span class="comment">#https: # 先注释https相关配置 </span></span><br><span class="line">harbor_admin_password: Harbor12345 </span><br><span class="line">./prepare</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
+<p>3、访问harbor</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http://reg.azhe.com/</span><br></pre></td></tr></table></figure>
+<p><img src="/images/65FF30622A314D5391BD5ACBBEC52776clipboard.png" alt></p>
+<p>Harbor 基本使用</p>
+<p>1、配置http镜像仓库可信任（默认是https访问的，上面配置的是http，这里需要配置可信任)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#配置http镜像仓库可信任</span></span><br><span class="line">vi /etc/docker/daemon.json </span><br><span class="line">&#123;<span class="string">&quot;insecure-registries&quot;</span>:[<span class="string">&quot;reg.azhe.com&quot;</span>]&#125; </span><br><span class="line">systemctl restart docker</span><br><span class="line"><span class="comment">#查看是否有harbor容器退出，重新停止再拉起</span></span><br><span class="line">docker-compose ps</span><br><span class="line">docker-compose down</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>2.配置本地hosts文件解析</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/hosts</span><br><span class="line">192.168.0.11 reg.azhe.com</span><br></pre></td></tr></table></figure>
+<p>3.登录harbbor,打标签，上传，下载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login reg.azhe.com</span><br><span class="line">Username: admin</span><br><span class="line">Password: Harbor12345</span><br><span class="line"></span><br><span class="line">docker /images</span><br><span class="line">docker tag mysql:5.7 reg.azhe.com/library/mysql:5.7</span><br><span class="line">docker push reg.azhe.com/library/mysql:5.7</span><br><span class="line">docker pull reg.azhe.com/library/mysql:5.7</span><br></pre></td></tr></table></figure>
+<p><img src="/images/158D447BE1A84A4C96A9CC38A8FF762Dclipboard.png" alt></p>
+<p>Harbor 部署HTTPS</p>
+<p>1、生成SSL证书</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> ssl</span><br><span class="line"><span class="built_in">cd</span> ssl</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line">ca-config.json  ca-key.pem  cfssl.sh               reg.azhe.com-key.pem</span><br><span class="line">ca.csr          ca.pem      reg.azhe.com.csr       reg.azhe.com.pem</span><br><span class="line">ca-csr.json     certs.sh    reg.azhe.com-csr.json</span><br></pre></td></tr></table></figure>
+<p>vim <a target="_blank" rel="noopener" href="http://cfssl.sh">cfssl.sh</a> (证书生成工具）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64</span><br><span class="line">wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64</span><br><span class="line">wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64</span><br><span class="line"><span class="built_in">chmod</span> +x cfssl*</span><br><span class="line"><span class="built_in">mv</span> cfssl_linux-amd64 /usr/bin/cfssl</span><br><span class="line"><span class="built_in">mv</span> cfssljson_linux-amd64 /usr/bin/cfssljson</span><br><span class="line"><span class="built_in">mv</span> cfssl-certinfo_linux-amd64 /usr/bin/cfssl-certinfo</span><br></pre></td></tr></table></figure>
+<p>vim <a target="_blank" rel="noopener" href="http://certs.sh">certs.sh</a>(证书生成脚本）</p>
+<p>#注意里面的域名修改为自己的harbor域名</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ca-config.json &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;signing&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;default&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;expiry&quot;: &quot;87600h&quot;</span></span><br><span class="line"><span class="string">    &#125;,</span></span><br><span class="line"><span class="string">    &quot;profiles&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;kubernetes&quot;: &#123;</span></span><br><span class="line"><span class="string">         &quot;expiry&quot;: &quot;87600h&quot;,</span></span><br><span class="line"><span class="string">         &quot;usages&quot;: [</span></span><br><span class="line"><span class="string">            &quot;signing&quot;,</span></span><br><span class="line"><span class="string">            &quot;key encipherment&quot;,</span></span><br><span class="line"><span class="string">            &quot;server auth&quot;,</span></span><br><span class="line"><span class="string">            &quot;client auth&quot;</span></span><br><span class="line"><span class="string">        ]</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; ca-csr.json &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    &quot;CN&quot;: &quot;kubernetes&quot;,</span></span><br><span class="line"><span class="string">    &quot;key&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;algo&quot;: &quot;rsa&quot;,</span></span><br><span class="line"><span class="string">        &quot;size&quot;: 2048</span></span><br><span class="line"><span class="string">    &#125;,</span></span><br><span class="line"><span class="string">    &quot;names&quot;: [</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            &quot;C&quot;: &quot;CN&quot;,</span></span><br><span class="line"><span class="string">            &quot;L&quot;: &quot;Beijing&quot;,</span></span><br><span class="line"><span class="string">            &quot;ST&quot;: &quot;Beijing&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    ]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">cfssl gencert -initca ca-csr.json | cfssljson -bare ca -</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; reg.azhe.com-csr.json &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;CN&quot;: &quot;reg.azhe.com&quot;,</span></span><br><span class="line"><span class="string">  &quot;hosts&quot;: [],</span></span><br><span class="line"><span class="string">  &quot;key&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;algo&quot;: &quot;rsa&quot;,</span></span><br><span class="line"><span class="string">    &quot;size&quot;: 2048</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &quot;names&quot;: [</span></span><br><span class="line"><span class="string">    &#123;</span></span><br><span class="line"><span class="string">      &quot;C&quot;: &quot;CN&quot;,</span></span><br><span class="line"><span class="string">      &quot;L&quot;: &quot;BeiJing&quot;,</span></span><br><span class="line"><span class="string">      &quot;ST&quot;: &quot;BeiJing&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  ]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes reg.azhe.com-csr.json | cfssljson -bare reg.azhe.com </span><br></pre></td></tr></table></figure>
+<p>2、Harbor启用HTTPS</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi harbor.yml</span><br><span class="line">https:</span><br><span class="line">  port: 443</span><br><span class="line">   certificate: /root/ssl/reg.azhe.com.pem     <span class="comment">#指定你生成的数字证书</span></span><br><span class="line">   private_key: /root/ssl/reg.azhe.com-key.pem   <span class="comment">#指定key</span></span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<p>3、重新配置并部署Harbor</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./prepare </span><br><span class="line">docker-compose down </span><br><span class="line">docker-compose up –d</span><br></pre></td></tr></table></figure>
+<p>4、修改Docker启动文件添加“–insecure-registry <a target="_blank" rel="noopener" href="http://reg.azhe.com">reg.azhe.com</a>”并配置hosts文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /usr/lib/systemd/system/docker.service </span><br><span class="line">ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --insecure-registry reg.azhe.com</span><br><span class="line"></span><br><span class="line">systemctl restart docker</span><br><span class="line">vim /etc/hosts</span><br><span class="line">192.168.0.11 reg.azhe.com</span><br></pre></td></tr></table></figure>
+<p>5、验证</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login reg.azhe.com</span><br><span class="line">Username: admin</span><br><span class="line">Password: Harbor12345</span><br><span class="line"></span><br><span class="line">docker /images</span><br><span class="line">docker pull reg.azhe.com/library/mysql:5.7</span><br></pre></td></tr></table></figure>
+<p>以上harbor部署https方式的第4步骤，如果配置完成后，在docker主机登录harbor报证书错误，那么可以通过以下方式解决或参考链接：</p>
+<p>4.将数字证书复制到Docker主机</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">scp reg.azhe.com.pem root@192.168.0.13:~   <span class="comment">#拷贝到要登录harbor的docker客户端</span></span><br><span class="line"><span class="built_in">mkdir</span> /etc/docker/certs.d/reg.azhe.com</span><br><span class="line"><span class="built_in">cp</span> reg.azhe.com.pem /etc/docker/certs.d/reg.azhe.com/reg.azhe.com.crt</span><br></pre></td></tr></table></figure>
+<p>参考链接</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/chenglang0914/article/details/100833054">https://blog.csdn.net/chenglang0914/article/details/100833054</a></p>
+<p>Harbor 主从复制</p>
+<p><img src="/images/B77A284AA7994A2894263F4F287452E8clipboard.png" alt></p>
+<p>主备模式</p>
+<p>1.准备备机harbor</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> docker-compose-Linux-x86_64 /usr/bin/docker-compose</span><br><span class="line"><span class="built_in">chmod</span> +x /usr/bin/docker-compose</span><br><span class="line"></span><br><span class="line">tar -zxf harbor-offline-installer-v2.0.0.tgz</span><br><span class="line"><span class="built_in">cd</span> harbor </span><br><span class="line"><span class="built_in">cp</span> harbor.yml.tmpl harbor.yml </span><br><span class="line"></span><br><span class="line">vi harbor.yml </span><br><span class="line">hostname: 192.168.0.12</span><br><span class="line"><span class="comment">#https: # 先注释https相关配置 </span></span><br><span class="line">harbor_admin_password: Harbor12345 </span><br><span class="line">./prepare</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
+<p>2.在主harbor页面配置主从复制和规则</p>
+<p><img src="/images/2A099C79ECDB4C83B3D5917E0BDA3BE6clipboard.png" alt></p>
+<p><img src="/images/2726A20B44774F2EABFB8A0F45DDC380clipboard.png" alt></p>
+<p>3.客户端docker主机上传镜像到主harbor并验证是否复制到从harbor</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login reg.azhe.com</span><br><span class="line">Username: admin</span><br><span class="line">Password: Harbor12345</span><br><span class="line"></span><br><span class="line">docker tag centos:7 reg.azhe.com/library/centos:7</span><br><span class="line">docker push reg.azhe.com/library/centos:7</span><br></pre></td></tr></table></figure>
+<p><img src="/images/F29DE1853ED34C21961D7A4A2EEB9CADclipboard.png" alt></p>
+<p><img src="/images/FF5C2BF9C43248F4AE5521F5F200F61Cclipboard.png" alt></p>
+<p><img src="/images/71319B66EA1E4E36A28CDFA7BE80681Eclipboard.png" alt></p>
+<p>Harbor 运维维护</p>
+<p><img src="/images/4CBC3EA772514E54B38302F5409C461Aclipboard.png" alt></p>
+<p>容器数据持久化目录：/data</p>
+<p>日志文件目录：/var/log/harbor</p>
+<p>PG数据库做好定期备份，里面存放用户数据文件。</p>
+<p>主从复制，主harbor挂掉，启用备harbor，需要把pg数据导入到备harbor。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://liuzhemax.github.io">阿哲</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://liuzhemax.github.io/2022/05/25/harbor%E9%83%A8%E7%BD%B2/">http://liuzhemax.github.io/2022/05/25/harbor%E9%83%A8%E7%BD%B2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://liuzhemax.github.io" target="_blank">阿哲博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Docker/">Docker</a></div><div class="post_share"><div class="social-share" data-image="/medias/touxiang.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/05/24/%E9%95%9C%E5%83%8F%E7%9A%84%E5%88%B6%E4%BD%9Ccmd%E4%B8%8Eentrypoint%E5%8C%BA%E5%88%AB/" title="镜像的制作CMD与ENTRYPOINT区别"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">镜像的制作CMD与ENTRYPOINT区别</div></div></a></div><div class="next-post pull-right"><a href="/2022/05/26/%E5%AE%9E%E7%8E%B0docker%E5%AE%B9%E5%99%A8%E5%A4%9A%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1/" title="实现Docker容器多主机通信"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">实现Docker容器多主机通信</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/05/23/java%E9%A1%B9%E7%9B%AE%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA/" title="JAVA项目镜像构建：Tomcat"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-23</div><div class="title">JAVA项目镜像构建：Tomcat</div></div></a></div><div><a href="/2022/05/27/%E5%9F%BA%E4%BA%8Edocker%E6%9E%84%E5%BB%BA%E4%BC%81%E4%B8%9Ajenkins%E5%B9%B3%E5%8F%B0/" title="基于Docker构建企业Jenkins平台"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-27</div><div class="title">基于Docker构建企业Jenkins平台</div></div></a></div><div><a href="/2022/05/26/%E5%AE%9E%E7%8E%B0docker%E5%AE%B9%E5%99%A8%E5%A4%9A%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1/" title="实现Docker容器多主机通信"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-26</div><div class="title">实现Docker容器多主机通信</div></div></a></div><div><a href="/2022/05/28/%E5%AE%B9%E5%99%A8%E5%8C%96%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/" title="容器化搭建个人博客系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-28</div><div class="title">容器化搭建个人博客系统</div></div></a></div><div><a href="/2022/05/24/%E9%95%9C%E5%83%8F%E7%9A%84%E5%88%B6%E4%BD%9Ccmd%E4%B8%8Eentrypoint%E5%8C%BA%E5%88%AB/" title="镜像的制作CMD与ENTRYPOINT区别"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-24</div><div class="title">镜像的制作CMD与ENTRYPOINT区别</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/medias/touxiang.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">阿哲</div><div class="author-info__description">强大自己是解决问题的唯一办法</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">129</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:1437626743@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">分享个人经验总结</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/23/django-webssh%E5%AE%9E%E7%8E%B0/" title="django-webssh实现">django-webssh实现</a><time datetime="2024-09-23T14:00:00.000Z" title="发表于 2024-09-23 22:00:00">2024-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/22/django-apscheduler%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="django-apscheduler基本使用">django-apscheduler基本使用</a><time datetime="2024-09-22T13:00:32.000Z" title="发表于 2024-09-22 21:00:32">2024-09-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/28/zabbix%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="zabbix监控服务器">zabbix监控服务器</a><time datetime="2024-08-28T07:00:00.000Z" title="发表于 2024-08-28 15:00:00">2024-08-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/26/%E9%93%B6%E6%B2%B3%E9%BA%92%E9%BA%9F%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85zabbix7/" title="银河麒麟离线安装zabbix7">银河麒麟离线安装zabbix7</a><time datetime="2024-08-26T10:00:00.000Z" title="发表于 2024-08-26 18:00:00">2024-08-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/10/vue%E8%B7%AF%E7%94%B1vue-router/" title="vue路由vue-router">vue路由vue-router</a><time datetime="2024-06-10T00:45:32.000Z" title="发表于 2024-06-10 08:45:32">2024-06-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="footer_custom_text">阿哲技术之路</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const initValine = () => {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'CpY65dXCKVEa3DBB8f2QYt8x-gzGzoHsz',
+      appKey: '0q1Om1m7X58AstiqpPYRPyDT',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  const loadValine = async () => {
+    if (typeof Valine === 'function') initValine()
+    else {
+      await getScript('https://cdn.jsdelivr.net/npm/valine@1.5.1/dist/Valine.min.js')
+      initValine()
+    }
+  }
+
+  if ('Valine' === 'Valine' || !false) {
+    if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+    else setTimeout(loadValine, 0)
+  } else {
+    window.loadOtherComment = loadValine
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
